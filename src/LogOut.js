@@ -9,7 +9,7 @@ function LogoutButton() {
 
   return isAuthenticated && (
     <button onClick={() => {
-      logout({ returnTo: window.location.origin });
+      logout({ returnTo: process.env.REACT_APP_URL });
     }}>Log out</button>
   );
 }
