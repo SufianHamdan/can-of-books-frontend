@@ -80,3 +80,14 @@ Finish time: 5:30 pm
 
 Actual time needed to complete: half hour
 
+*******************************************************************************************************
+Name of feature: get the data from express server
+
+Estimate of time needed to complete:one hour
+
+Start time: 5:30 pm
+
+Finish time: 7:30 pm
+
+Actual time needed to complete: 2 hours
+
