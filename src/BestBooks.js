@@ -64,9 +64,9 @@ class MyFavoriteBooks extends React.Component {
       }
       const books = await axios.post(`${this.state.server}/books`, bodyData );
       console.log(books);
-      // this.setState ({
-      //   books: books.data[0].books
-      // });
+      this.setState ({
+        books: books.data[0].books
+      });
 
     } catch (error) {
       console.log(error);
