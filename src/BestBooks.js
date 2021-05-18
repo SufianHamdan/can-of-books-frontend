@@ -52,11 +52,12 @@ class MyFavoriteBooks extends React.Component {
   updatebookStatus = (e) => this.setState({ bookStatus: e.target.value });
 
   getNewBook = async (e) => {
+    const { user } = this.props.auth0;
     e.preventDefault();
     try {
 
       const bodyData  = {
-        email: this.state.email,
+        email: user.email,
         bookName: this.state.bookName,
         bookDescription: this.state.bookName,
         bookStatus: this.state.bookStatus
@@ -64,14 +65,35 @@ class MyFavoriteBooks extends React.Component {
       }
       const books = await axios.post(`${this.state.server}/books`, bodyData );
       console.log(books);
-      // this.setState ({
-      //   books: books.data[0].books
-      // });
+      this.setState ({
+        books: books.data[0].books
+      });
 
     } catch (error) {
       console.log(error);
     }
   }
+  
+  deleteBook = async (index) => {
+    // console.log(index);
+    const { user } = this.props.auth0;
+    const newArrayOfBooks = this.state.books.filter((book, idx) => {
+      return idx !== index;
+    });
+    
+    console.log(newArrayOfBooks);
+    this.setState({
+      books: newArrayOfBooks
+    });
+
+    const query = {
+      email: user.email
+    }
+
+    await axios.delete(`${this.state.server}/books/${index}`, { params: query });
+
+  }
+
 
   componentDidMount() {
     this.setState({
@@ -134,7 +156,8 @@ class MyFavoriteBooks extends React.Component {
                       <Card.Body>
                         <Card.Title>Name: {data.name}</Card.Title>
                         <Card.Text>Description: {data.description}</Card.Text>
-                        <Card.Text>Status: {data.status}</Card.Text>                         
+                        <Card.Text>Status: {data.status}</Card.Text>
+                        <button onClick={() => {this.deleteBook(index)}}>Delete</button>                         
                       </Card.Body>
                     </Card>
                    {/*  <Carousel.Item key={index}>
