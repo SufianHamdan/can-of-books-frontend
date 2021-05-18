@@ -5,6 +5,8 @@ import './BestBooks.css';
 import axios from 'axios';
 import { withAuth0 } from "@auth0/auth0-react";
 import Card from 'react-bootstrap/Card';
+import BookFormModal from './component/BookFormModal';
+
 
 
 class MyFavoriteBooks extends React.Component {
@@ -14,7 +16,60 @@ class MyFavoriteBooks extends React.Component {
     this.state = {
       books: [],
       showBestBooksComponent: false,
-      server: process.env.REACT_APP_SERVER_URL
+      server: process.env.REACT_APP_SERVER_URL,
+      showFormPage: false,
+      email: '',
+      bookName: '',
+      bookDescription: '',
+      bookStatus: ''
+    }
+  }
+  getBooks = async () => {
+    const { user } = this.props.auth0;
+    try {
+
+      const paramsObj = {
+        email: user.email
+      }
+      const books = await axios.get(`${this.state.server}/books`, { params: paramsObj });
+
+      console.log(books);
+
+
+      this.setState({        
+        books: books.data[0].books,
+        showBestBooksComponent: true,
+        emeil: user.email
+      });
+    } catch (error) {
+      console.log(error);
+    }
+   
+  }
+
+  updateBookName = (e) => this.setState({ bookName: e.target.value });
+  updateBookDescription = (e) => this.setState({ bookDescription: e.target.value });
+  updatebookStatus = (e) => this.setState({ bookStatus: e.target.value });
+
+  getNewBook = async (e) => {
+    e.preventDefault();
+    try {
+
+      const bodyData  = {
+        email: this.state.email,
+        bookName: this.state.bookName,
+        bookDescription: this.state.bookName,
+        bookStatus: this.state.bookStatus
+
+      }
+      const books = await axios.post(`${this.state.server}/books`, bodyData );
+      console.log(books);
+      // this.setState ({
+      //   books: books.data[0].books
+      // });
+
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -27,23 +82,20 @@ class MyFavoriteBooks extends React.Component {
     console.log(this.getBooks);
   }
 
-  getBooks = async () => {
-    const { user } = this.props.auth0;
-    try {
-
-      const paramsObj = {
-        email: user.email
-      }
-      const books = await axios.get(`${this.state.server}/books`, { params: paramsObj });
-      console.log(books);
-      this.setState({
-        books: books.data[0].books,
-        showBestBooksComponent: true
-      });
-    } catch (error) {
-      console.log(error);
-    }
+ 
+  showForm = () => {
+    this.setState({
+      showFormPage: true,
+    });
+    console.log('sd');
   }
+
+  closeForm = () => {
+    this.setState({
+      showFormPage: false,
+    });
+  }
+  
 
   render() {
     console.log(this.state.books);
@@ -55,7 +107,21 @@ class MyFavoriteBooks extends React.Component {
           <p>
             This is a collection of my favorite books
             </p>
+            <button onClick={this.showForm}>Add Books</button>
+            {this.state.showFormPage &&
+            <>
+            <BookFormModal
+              getBookName= {this.updateBookName}
+              getBookDescription= {this.updateBookDescription}
+              getBookStatus= {this.updatebookStatus}       
+              ShowForm = {this.state.showFormPage}
+              closeForm = {this.closeForm}
+              getNewBook = {this.getNewBook}
 
+            />
+            </>
+            }
+          
 
 
           {this.state.showBestBooksComponent &&

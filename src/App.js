@@ -14,6 +14,7 @@ import Profile from './profile';
 import { withAuth0 } from "@auth0/auth0-react";
 
 
+
 class App extends React.Component {
   
   render() {
@@ -27,10 +28,11 @@ class App extends React.Component {
               <Route exact path="/">
                 
                 {/* TODO: if the user is logged in, render the `BestBooks` component, if they are not, render the `Login` component */
-                <>
+                <> 
                 {this.props.auth0.isAuthenticated ?  <BestBooks /> : <Login />
                  
-                }                                                                                      
+                }
+                                                                                                     
                 </>    
                 } 
               </Route>
