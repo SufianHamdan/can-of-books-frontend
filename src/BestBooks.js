@@ -5,7 +5,10 @@ import './BestBooks.css';
 import axios from 'axios';
 import { withAuth0 } from "@auth0/auth0-react";
 import Card from 'react-bootstrap/Card';
+import { CardColumns } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import BookFormModal from './component/BookFormModal';
+import UpdateBookForm from './component/UpdateBookForm';
 
 
 
@@ -21,7 +24,9 @@ class MyFavoriteBooks extends React.Component {
       email: '',
       bookName: '',
       bookDescription: '',
-      bookStatus: ''
+      bookStatus: '',
+      showUpdateForm: false,
+      index: 0
     }
   }
   getBooks = async () => {
@@ -94,10 +99,44 @@ class MyFavoriteBooks extends React.Component {
 
   }
 
+  updateFormText = (idx) => {
+
+    const newUpdatedBookArr = this.state.books.filter((value, index) => {
+      return idx === index
+    });
+
+    console.log(newUpdatedBookArr);
+    this.setState({
+      index: idx,
+      bookName: newUpdatedBookArr[0].name,
+      bookDescription: newUpdatedBookArr[0].description,
+      bookStatus: newUpdatedBookArr[0].status,
+      showUpdateForm: true,
+    });
+  }
+
+  updateBook = async (e) => {
+    e.preventDefault();
+    const reqBody = {
+      bookName: this.state.bookName,
+      bookDescription: this.state.bookDescription,
+      bookStatus: this.state.bookStatus,
+      email: this.state.email
+    }
+    const books = await axios.put(`${this.state.server}/books/${this.state.index}`, reqBody);
+
+    this.setState({
+      books: books.data
+    });
+
+  }
+
 
   componentDidMount() {
+    const { user } = this.props.auth0;
     this.setState({
       showBestBooksComponent: true,
+      email: user.email
     });
 
     this.getBooks();
@@ -129,6 +168,7 @@ class MyFavoriteBooks extends React.Component {
           <p>
             This is a collection of my favorite books
             </p>
+            </Jumbotron>
             <button onClick={this.showForm}>Add Books</button>
             {this.state.showFormPage &&
             <>
@@ -143,48 +183,57 @@ class MyFavoriteBooks extends React.Component {
             />
             </>
             }
+            <>
+            {this.state.showUpdateForm &&
+              <UpdateBookForm
+                updateBookName = {this.updateBookName}
+                updateBookDescription = {this.updateBookDescription}
+                updatebookStatus = {this.updatebookStatus}
+                bookName={this.state.bookName}
+                bookDescription={this.state.bookDescription}
+                bookStatus={this.state.bookStatus}
+                updateBook = {this.updateBook}
+                
+              />
+            }
+          </>
           
 
 
           {this.state.showBestBooksComponent &&
             <>
-
+              
+               <div class="container">
+                <Row className="justify-content-md-center">
+                  <CardColumns>
               {this.state.books.map((data, index) => {
                 return (
                   <>
-                    <Card style={{ width: '18rem' }} key={index}>
-                      <Card.Body>
-                        <Card.Title>Name: {data.name}</Card.Title>
-                        <Card.Text>Description: {data.description}</Card.Text>
-                        <Card.Text>Status: {data.status}</Card.Text>
-                        <button onClick={() => {this.deleteBook(index)}}>Delete</button>                         
-                      </Card.Body>
-                    </Card>
-                   {/*  <Carousel.Item key={index}>
-                      <img
-                        className="d-block w-100"
-                        src="holder.js/800x400?text=First slide&bg=373940"
-                        alt=""
-                      />
-                      <Carousel.Caption>
-                        <h3>Name: {data.name}</h3>
-                        <p>Description: {data.description}</p>
-                        <p>Status: {data.status}</p>
-                      </Carousel.Caption>
-                    </Carousel.Item> */}
-
+                    <Col md="auto">
+                      <Card style={{ width: '24rem' }} key={index}>
+                        <Card.Body>
+                          <Card.Title>Name: {data.name}</Card.Title>
+                          <Card.Text>Description: {data.description}</Card.Text>
+                          <Card.Text>Status: {data.status}</Card.Text>
+                          <button onClick={() => {this.deleteBook(index)}}>Delete</button>
+                          <button onClick={() => {this.updateFormText(index)}}>Update</button>                          
+                        </Card.Body>
+                      </Card>
+                    </Col>
                   </>
                 );
 
               })
               }
+                  </CardColumns>
+                </Row>
+              </div>
             </>
           }
 
 
-        </Jumbotron>
+          
       </>
-
 
 
     )
