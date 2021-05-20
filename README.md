@@ -101,6 +101,7 @@ Start time: 4:00 pm
 Finish time:5:30 pm
 
 Actual time needed to complete: 1.5 hours
+
 **********************************************************************************************************
 
 Name of feature: delete the data from mongo
@@ -110,5 +111,17 @@ Estimate of time needed to complete:one hour
 Start time: 5:30 pm
 
 Finish time: 7:00 pm
+
+Actual time needed to complete: 1.5 hour
+
+**********************************************************************************************************
+
+Name of feature: update the data from mongo
+
+Estimate of time needed to complete:one hour
+
+Start time: 3:00 pm
+
+Finish time: 4:30 pm
 
 Actual time needed to complete: 1.5 hour
